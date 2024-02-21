@@ -5,6 +5,9 @@ import java.util.LinkedList;
 public class Piece {
 	int xPos;
 	int yPos;
+	
+	int newX;
+	int newY;
 	boolean isWhite;
 	String type;
 	LinkedList<Piece> pList;
@@ -14,6 +17,8 @@ public class Piece {
 		super();
 		this.xPos = xPos*64;
 		this.yPos = yPos*64;
+		newX = xPos*64;
+		newY = yPos*64;
 		this.isWhite = isWhite;
 		this.type = type;
 		pList.add(this);

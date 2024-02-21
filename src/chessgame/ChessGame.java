@@ -3,6 +3,9 @@ package chessgame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +18,10 @@ import javax.swing.JPanel;
 
 public class ChessGame {
 
-	public static void reset(LinkedList<Piece> pList) {
+	static Piece selectedP;
+	public static LinkedList<Piece> pList = new LinkedList<>();
+	
+	public static void reset() {
 		pList.clear();
 		Piece wKing = new Piece(3, 0, true, "king", pList);
 		Piece wQueen = new Piece(4, 0, true,"queen", pList);
@@ -43,7 +49,7 @@ public class ChessGame {
 		
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		LinkedList<Piece> pList = new LinkedList<>();
+		
 		
 		
 		BufferedImage chessPieces = ImageIO.read(new File(System.getProperty("user.dir") + "/src/assets/chess.png"));
@@ -58,7 +64,7 @@ public class ChessGame {
 			}
 		}
 		
-		reset(pList);
+		reset();
 		
 		JFrame frame = new JFrame();
 		frame.setBounds(10, 10, 512, 512);
@@ -103,8 +109,72 @@ public class ChessGame {
 			}
 		};
 		frame.add(panel);
+		frame.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+				selectedP = eatPiece(e.getX(), e.getY());
+				
+				System.out.println((selectedP.isWhite ? "White" : "Black" )+ " " + selectedP.type);
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		frame.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		frame.setDefaultCloseOperation(3);
 		frame.setVisible(true);
+	}
+	
+	public static Piece eatPiece(int xPos, int yPos) {
+		
+		xPos /= 64;
+		yPos /= 64;
+		
+		for (Piece p : pList) {
+			if(p.xPos/64 == xPos && p.yPos/64 == yPos) {
+				return p;
+			}
+		}
+		
+		return null;
 	}
 
 }

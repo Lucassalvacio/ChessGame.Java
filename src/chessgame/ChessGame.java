@@ -3,6 +3,7 @@ package chessgame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -15,6 +16,9 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import pieces.Pawn;
+import pieces.Piece;
 
 public class ChessGame {
 
@@ -42,8 +46,8 @@ public class ChessGame {
 		Piece bBishop2 = new Piece(2, 7, false,"Bishop", pList);
 		
 		for(int i = 0; i < 8; i++) {
-			Piece bPawn = new Piece(i, 1, true, "pawn", pList);
-			Piece wPawn = new Piece(i, 6, false, "pawn", pList);
+			Piece bPawn = new Pawn(i, 1, true, "pawn", pList);
+			Piece wPawn = new Pawn(i, 6, false, "pawn", pList);
 		}
 	}
 		
@@ -64,11 +68,12 @@ public class ChessGame {
 			}
 		}
 		
+		
 		reset();
 		
 		JFrame frame = new JFrame();
 		frame.setBounds(10, 10, 512, 512);
-//		frame.setUndecorated(true);
+		frame.setUndecorated(true);
 		
 		JPanel panel = new JPanel() {
 			@Override
@@ -104,7 +109,7 @@ public class ChessGame {
 					if(!p.isWhite) {
 						idx+=6;
 					}
-					g.drawImage(piecesImage[idx], p.xPos, p.yPos, this);
+					g.drawImage(piecesImage[idx], p.xPos*64, p.yPos*64, this);
 				}
 			}
 		};
@@ -120,10 +125,23 @@ public class ChessGame {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
+				if(selectedP == null) {
+					
+					selectedP = eatPiece(e.getX()/64, e.getY()/64);
+//					if(selectedP != null) {
+//						
+//						System.out.println((selectedP.isWhite ? "White" : "Black" )+ " " + selectedP.type + " at " + e.getX() + " " + e.getY());
+//					}else {
+//						System.out.println(e.getX() + " " + e.getY());
+//					}
+				}else {
+					selectedP.move(e.getX()/64, e.getY()/64, pList);
+					frame.repaint();
+					selectedP = null;
+				}
 				
-				selectedP = eatPiece(e.getX(), e.getY());
 				
-				System.out.println((selectedP.isWhite ? "White" : "Black" )+ " " + selectedP.type);
+				
 				
 			}
 			
@@ -165,11 +183,8 @@ public class ChessGame {
 	
 	public static Piece eatPiece(int xPos, int yPos) {
 		
-		xPos /= 64;
-		yPos /= 64;
-		
 		for (Piece p : pList) {
-			if(p.xPos/64 == xPos && p.yPos/64 == yPos) {
+			if(p.xPos == xPos && p.yPos == yPos) {
 				return p;
 			}
 		}

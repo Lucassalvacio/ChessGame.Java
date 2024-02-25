@@ -17,8 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import pieces.Pawn;
-import pieces.Piece;
+import pieces.*;
 
 public class ChessGame {
 
@@ -38,8 +37,8 @@ public class ChessGame {
 		
 		Piece bKing = new Piece(4, 7, false, "king", pList);
 		Piece bQueen = new Piece(3, 7, false,"queen", pList);
-		Piece bRook1 = new Piece(0, 7, false,"rook", pList);
-		Piece bRook2 = new Piece(7, 7, false,"rook", pList);
+		Piece bRook1 = new Rook(0, 7, false,"rook", pList);
+		Piece bRook2 = new Rook(7, 7, false,"rook", pList);
 		Piece bKnight1 = new Piece(6, 7, false,"knight", pList);
 		Piece bKnight2 = new Piece(1, 7, false,"knight", pList);
 		Piece bBishop1 = new Piece(5, 7, false,"Bishop", pList);
@@ -52,7 +51,7 @@ public class ChessGame {
 	}
 		
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
 		
 		
 		
@@ -127,7 +126,7 @@ public class ChessGame {
 				// TODO Auto-generated method stub
 				if(selectedP == null) {
 					
-					selectedP = eatPiece(e.getX()/64, e.getY()/64);
+					selectedP = getPiece(e.getX()/64, e.getY()/64);
 //					if(selectedP != null) {
 //						
 //						System.out.println((selectedP.isWhite ? "White" : "Black" )+ " " + selectedP.type + " at " + e.getX() + " " + e.getY());
@@ -135,9 +134,19 @@ public class ChessGame {
 //						System.out.println(e.getX() + " " + e.getY());
 //					}
 				}else {
-					selectedP.move(e.getX()/64, e.getY()/64, pList);
-					frame.repaint();
-					selectedP = null;
+					if(selectedP.xPos != e.getX()/64 || selectedP.yPos != e.getY()/64) {
+						Piece target = getPiece(e.getX()/64, e.getY()/64);
+						if(target == null) {
+							selectedP.move(e.getX()/64, e.getY()/64, pList);
+							frame.repaint();
+							selectedP = null;
+						}else if(target.isWhite  && !selectedP.isWhite || !target.isWhite  && selectedP.isWhite) {
+							selectedP.move(e.getX()/64, e.getY()/64, pList);
+							frame.repaint();
+							selectedP = null;
+						}
+						
+					}
 				}
 				
 				
@@ -181,7 +190,7 @@ public class ChessGame {
 		frame.setVisible(true);
 	}
 	
-	public static Piece eatPiece(int xPos, int yPos) {
+	public static Piece getPiece(int xPos, int yPos) {
 		
 		for (Piece p : pList) {
 			if(p.xPos == xPos && p.yPos == yPos) {

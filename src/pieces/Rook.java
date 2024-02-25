@@ -12,7 +12,13 @@ public class Rook extends Piece{
 	@Override
 	public void move(int xPos, int yPos, LinkedList<Piece> pList) {
 		// TODO Auto-generated method stub
-		super.move(xPos, yPos, pList);
+		if(xPos == this.xPos || yPos == this.yPos) {
+//			if(xPos == this.xPos) {
+//				//Check Colission from this.yPos till yPos
+//			}
+			super.move(xPos, yPos, pList);
+		}
+		
 	}
 
 	

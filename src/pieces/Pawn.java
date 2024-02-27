@@ -15,6 +15,7 @@ public class Pawn extends Piece{
 		super.move(xPos, yPos, pList);
 		if((this.yPos == 0 && !this.isWhite) || (this.yPos == 7 && this.isWhite)) {
 			Piece temp = this;
+			
 			ChessGame.changePiece(temp, "queen");
 			this.die(pList);
 		}
@@ -52,9 +53,13 @@ public class Pawn extends Piece{
 						}
 					}
 				}
-				
 			}
 		}
 	}
 
+	private void promotion() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

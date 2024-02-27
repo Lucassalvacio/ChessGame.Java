@@ -8,11 +8,11 @@ import chessgame.ChessGame;
 public class Piece {
 	public int xPos;
 	public int yPos;
-	public int xRawPos;
-	public int yRawPos;
-
 	public boolean isWhite;
 	public String type;
+	
+	public int xRawPos; // For following the mouse while user dragging piece
+	public int yRawPos; 
 
 	public ArrayList<Move> possibleMove = new ArrayList<Move>();
 	protected int moveCount = 0;
@@ -32,7 +32,6 @@ public class Piece {
 	
 	
 	public void move(int xPos, int yPos, LinkedList<Piece> pList) {
-		
 		Move temp = getMove(xPos, yPos);
 		if( temp != null) {
 			if(temp.target != null) {
@@ -52,13 +51,8 @@ public class Piece {
 			this.xRawPos = this.xPos*64;
 			this.yRawPos = this.yPos*64;
 			System.out.println(this.xPos + ", " + this.yPos + " to " + xPos + ", " + yPos + "Is Not Valid");
-		}
-		
-//		checkKill(xPos, yPos, pList);
-		
-		
+		}	
 	}
-	
 	
 	public Move getMove(int xEnd, int yEnd) {
 		for (Move move: possibleMove) {
@@ -66,14 +60,11 @@ public class Piece {
 				return move;
 			}
 		}
-		
 		return null;
 	}
 
 	public void die(LinkedList<Piece> pList) {
-		
 		pList.remove(this);
-		
 	}
 	
 	public void preProcess() {

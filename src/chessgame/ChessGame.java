@@ -3,7 +3,6 @@ package chessgame;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -14,9 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -36,21 +33,21 @@ public class ChessGame {
 	
 	public static void reset() {
 		pList.clear();
-		Piece wKing = new Piece(3, 0, true, "king", pList);
+		Piece wKing = new King(3, 0, true, "king", pList);
 		Piece wQueen = new Queen(4, 0, true,"queen", pList);
 		Piece wRook1 = new Rook(0, 0, true,"rook", pList);
 		Piece wRook2 = new Rook(7, 0, true,"rook", pList);
-		Piece wKnight1 = new Piece(6, 0, true,"knight", pList);
-		Piece wKnight2 = new Piece(1, 0, true,"knight", pList);
+		Piece wKnight1 = new Knight(6, 0, true,"knight", pList);
+		Piece wKnight2 = new Knight(1, 0, true,"knight", pList);
 		Piece wBishop1 = new Bishop(5, 0, true,"Bishop", pList);
 		Piece wBishop2 = new Bishop(2, 0, true,"Bishop", pList);
 		
-		Piece bKing = new Piece(4, 7, false, "king", pList);
+		Piece bKing = new King(4, 7, false, "king", pList);
 		Piece bQueen = new Queen(3, 7, false,"queen", pList);
 		Piece bRook1 = new Rook(0, 7, false,"rook", pList);
 		Piece bRook2 = new Rook(7, 7, false,"rook", pList);
-		Piece bKnight1 = new Piece(6, 7, false,"knight", pList);
-		Piece bKnight2 = new Piece(1, 7, false,"knight", pList);
+		Piece bKnight1 = new Knight(6, 7, false,"knight", pList);
+		Piece bKnight2 = new Knight(1, 7, false,"knight", pList);
 		Piece bBishop1 = new Bishop(5, 7, false,"Bishop", pList);
 		Piece bBishop2 = new Bishop(2, 7, false,"Bishop", pList);
 		

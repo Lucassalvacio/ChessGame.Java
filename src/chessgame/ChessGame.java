@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -12,12 +14,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import pieces.*;
 
@@ -26,67 +30,41 @@ public class ChessGame {
 	static Piece selectedP;
 	public static LinkedList<Piece> pList = new LinkedList<>();
 
-	public static ArrayList<ArrayList<Integer>> numSqrToEdge;
+	
+	public static ArrayList<ArrayList<ArrayList<Integer>>> numSqrToEdge = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	public static int totalMoves = 0;
 	
 	public static void reset() {
 		pList.clear();
 		Piece wKing = new Piece(3, 0, true, "king", pList);
-		Piece wQueen = new Piece(4, 0, true,"queen", pList);
-		Piece wRook1 = new Piece(0, 0, true,"rook", pList);
-		Piece wRook2 = new Piece(7, 0, true,"rook", pList);
+		Piece wQueen = new Queen(4, 0, true,"queen", pList);
+		Piece wRook1 = new Rook(0, 0, true,"rook", pList);
+		Piece wRook2 = new Rook(7, 0, true,"rook", pList);
 		Piece wKnight1 = new Piece(6, 0, true,"knight", pList);
 		Piece wKnight2 = new Piece(1, 0, true,"knight", pList);
-		Piece wBishop1 = new Piece(5, 0, true,"Bishop", pList);
-		Piece wBishop2 = new Piece(2, 0, true,"Bishop", pList);
+		Piece wBishop1 = new Bishop(5, 0, true,"Bishop", pList);
+		Piece wBishop2 = new Bishop(2, 0, true,"Bishop", pList);
 		
 		Piece bKing = new Piece(4, 7, false, "king", pList);
-		Piece bQueen = new Piece(3, 7, false,"queen", pList);
+		Piece bQueen = new Queen(3, 7, false,"queen", pList);
 		Piece bRook1 = new Rook(0, 7, false,"rook", pList);
 		Piece bRook2 = new Rook(7, 7, false,"rook", pList);
 		Piece bKnight1 = new Piece(6, 7, false,"knight", pList);
 		Piece bKnight2 = new Piece(1, 7, false,"knight", pList);
-		Piece bBishop1 = new Piece(5, 7, false,"Bishop", pList);
-		Piece bBishop2 = new Piece(2, 7, false,"Bishop", pList);
+		Piece bBishop1 = new Bishop(5, 7, false,"Bishop", pList);
+		Piece bBishop2 = new Bishop(2, 7, false,"Bishop", pList);
 		
 		for(int i = 0; i < 8; i++) {
-			Piece bPawn = Pawn.create(i, 1, true, "pawn", pList);
-			Piece wPawn = Pawn.create(i, 6, false, "pawn", pList);
+			Piece bPawn = new Pawn(i, 1, true, "pawn", pList);
+			Piece wPawn = new Pawn(i, 6, false, "pawn", pList);
 		}
-		
-		for(int y = 0; y < 8; y++) {
-			for(int x = 0; x < 8; x++) {
-				int numUp = 7 - x;
-				int numRight = 7 - y;
-				int numDown = x;
-				int numLeft = y;
 				
-				
-				int idx = x * 8 + y;
-				
-				numSqrToEdge.add((ArrayList<Integer>) Arrays.asList(numUp, numRight, numDown, numLeft, Math.min(numUp, numRight), Math.min(numRight, numDown), Math.min(numDown, numLeft), Math.min(numLeft, numUp)));
-			}
-		}
-		
-	}
-		
-	public static int getNumSqrToEdge(int x, int y) {
-		return numSqrToEdge.get(y).get(x);
-	}
-
-	public static int getTotalMoves() {
-		return totalMoves;
-	}
-
-	public static void setTotalMoves() {
-		totalMoves++;
+		reProcess();
 	}
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub	
-		
-		
-		
+
 		BufferedImage chessPieces = ImageIO.read(new File(System.getProperty("user.dir") + "/src/assets/chess.png"));
 		Image piecesImage[] = new Image[12];
 		
@@ -95,11 +73,29 @@ public class ChessGame {
 			for(int x = 0; x < 1200; x += 200) {
 				piecesImage[idx]= chessPieces.getSubimage(x,  y, 200, 200).getScaledInstance(64, 64, BufferedImage.SCALE_SMOOTH);
 				idx++;
-				
 			}
 		}
 		
-		
+		for(int y = 0; y < 8; y++) {
+			ArrayList<ArrayList<Integer>> arrayHolder = new ArrayList<ArrayList<Integer>>();
+			for(int x = 0; x < 8; x++) {
+				int numUp = y;
+				int numRight = 7 - x;
+				int numDown = 7 - y;
+				int numLeft = x;
+				
+				ArrayList<Integer> temp = new ArrayList<>(Arrays.asList(numUp, numRight, numDown, numLeft, Math.min(numUp, numRight), Math.min(numRight, numDown), Math.min(numDown, numLeft), Math.min(numLeft, numUp)));
+				arrayHolder.add(temp);
+			}
+			numSqrToEdge.add(arrayHolder);
+		}
+//		for(int i = 0; i < 8; i++) {
+//			for(int j = 0; j < 8; j++) {
+//				System.out.print(numSqrToEdge.get(i).get(j).get(6) + " ");
+//			}
+//			System.out.println();
+//		}
+
 		reset();
 		
 		JFrame frame = new JFrame();
@@ -140,7 +136,7 @@ public class ChessGame {
 					if(!p.isWhite) {
 						idx+=6;
 					}
-					g.drawImage(piecesImage[idx], p.xPos*64, p.yPos*64, this);
+					g.drawImage(piecesImage[idx], p.xRawPos, p.yRawPos, this);
 				}
 			}
 		};
@@ -149,59 +145,48 @@ public class ChessGame {
 			
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
+				if(selectedP != null) {
+					Piece target = getPiece(e.getX()/64, e.getY()/64);
+					if(target == null) {
+						selectedP.move(e.getX()/64, e.getY()/64, pList);
+						frame.repaint();
+						selectedP = null;
+					}else if(target.isWhite  && !selectedP.isWhite || !target.isWhite  && selectedP.isWhite) {
+						selectedP.move(e.getX()/64, e.getY()/64, pList);
+						frame.repaint();
+						selectedP = null;
+					}else {
+						selectedP.xRawPos = selectedP.xPos*64;
+						selectedP.yRawPos = selectedP.yPos*64;
+						frame.repaint();
+						selectedP = null;
+					}
+				}
 			}
 			
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
 				if(selectedP == null) {
-					
 					selectedP = getPiece(e.getX()/64, e.getY()/64);
-//					if(selectedP != null) {
-//						
-//						System.out.println((selectedP.isWhite ? "White" : "Black" )+ " " + selectedP.type + " at " + e.getX() + " " + e.getY());
-//					}else {
-//						System.out.println(e.getX() + " " + e.getY());
-//					}
-				}else {
-					if(selectedP.xPos != e.getX()/64 || selectedP.yPos != e.getY()/64) {
-						Piece target = getPiece(e.getX()/64, e.getY()/64);
-						if(target == null) {
-							selectedP.move(e.getX()/64, e.getY()/64, pList);
-							frame.repaint();
-							selectedP = null;
-						}else if(target.isWhite  && !selectedP.isWhite || !target.isWhite  && selectedP.isWhite) {
-							selectedP.move(e.getX()/64, e.getY()/64, pList);
-							frame.repaint();
-							selectedP = null;
-						}
-						
-					}
 				}
 				
-				reProcess();
-				
-				
-				
-				
 			}
-			
+
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
-			
+
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -217,11 +202,37 @@ public class ChessGame {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+				if(selectedP != null) {
+					selectedP.xRawPos = e.getX() - 32;
+					selectedP.yRawPos = e.getY() - 32;
+					frame.repaint();
+				}
 			}
 		});
+		
+		Timer timer = new Timer(120000, new ActionListener(){
+		    public void actionPerformed(ActionEvent evt) {
+		        frame.dispose();
+		    }
+
+		});
+		timer.setRepeats(false);
+		timer.start();
+		
 		frame.setDefaultCloseOperation(3);
 		frame.setVisible(true);
+	}
+//	
+	public static ArrayList<Integer> getNumSqrToEdge(int x, int y) {
+		return numSqrToEdge.get(y).get(x);
+	}
+
+	public static int getTotalMoves() {
+		return totalMoves;
+	}
+
+	public static void setTotalMoves() {
+		totalMoves++;
 	}
 	
 	public static Piece getPiece(int xPos, int yPos) {

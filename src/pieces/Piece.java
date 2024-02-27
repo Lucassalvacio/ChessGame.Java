@@ -8,7 +8,8 @@ import chessgame.ChessGame;
 public class Piece {
 	public int xPos;
 	public int yPos;
-	
+	public int xRawPos;
+	public int yRawPos;
 
 	public boolean isWhite;
 	public String type;
@@ -21,6 +22,9 @@ public class Piece {
 		super();
 		this.xPos = xPos;
 		this.yPos = yPos;
+		xRawPos = xPos * 64;
+		yRawPos = yPos * 64;
+		
 		this.isWhite = isWhite;
 		this.type = type;
 		pList.add(this);
@@ -28,6 +32,7 @@ public class Piece {
 	
 	
 	public void move(int xPos, int yPos, LinkedList<Piece> pList) {
+		
 		Move temp = getMove(xPos, yPos);
 		if( temp != null) {
 			if(temp.target != null) {
@@ -35,14 +40,17 @@ public class Piece {
 			}
 			this.xPos = xPos;
 			this.yPos = yPos;
+			this.xRawPos = xPos * 64;
+			this.yRawPos = yPos * 64;
 			moveCount++;
 			ChessGame.setTotalMoves();
 			moveTime = ChessGame.getTotalMoves();
 			possibleMove.clear();
-			
-			
-			
+
+			ChessGame.reProcess();
 		}else {
+			this.xRawPos = this.xPos*64;
+			this.yRawPos = this.yPos*64;
 			System.out.println(this.xPos + ", " + this.yPos + " to " + xPos + ", " + yPos + "Is Not Valid");
 		}
 		
@@ -61,17 +69,6 @@ public class Piece {
 		
 		return null;
 	}
-	
-//	public void checkKill(int xPos, int yPos, LinkedList<Piece> pList) {
-//		for (Piece p: pList) {
-////			System.out.println(p.xPos + " " + p.yPos + " " + xPos + " " + yPos);
-//			if(p.xPos == xPos && p.yPos == yPos) {
-//				p.die(pList);
-//				break;
-//				
-//			}
-//		}
-//	}
 
 	public void die(LinkedList<Piece> pList) {
 		
@@ -80,8 +77,7 @@ public class Piece {
 	}
 	
 	public void preProcess() {
-//		System.out.println("No Process Yet");
-		
+		possibleMove.clear();
 	}
 	
 

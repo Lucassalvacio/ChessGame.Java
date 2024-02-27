@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +25,9 @@ public class ChessGame {
 
 	static Piece selectedP;
 	public static LinkedList<Piece> pList = new LinkedList<>();
+
+	public static ArrayList<ArrayList<Integer>> numSqrToEdge;
+	public static int totalMoves = 0;
 	
 	public static void reset() {
 		pList.clear();
@@ -45,11 +50,38 @@ public class ChessGame {
 		Piece bBishop2 = new Piece(2, 7, false,"Bishop", pList);
 		
 		for(int i = 0; i < 8; i++) {
-			Piece bPawn = new Pawn(i, 1, true, "pawn", pList);
-			Piece wPawn = new Pawn(i, 6, false, "pawn", pList);
+			Piece bPawn = Pawn.create(i, 1, true, "pawn", pList);
+			Piece wPawn = Pawn.create(i, 6, false, "pawn", pList);
 		}
+		
+		for(int y = 0; y < 8; y++) {
+			for(int x = 0; x < 8; x++) {
+				int numUp = 7 - x;
+				int numRight = 7 - y;
+				int numDown = x;
+				int numLeft = y;
+				
+				
+				int idx = x * 8 + y;
+				
+				numSqrToEdge.add((ArrayList<Integer>) Arrays.asList(numUp, numRight, numDown, numLeft, Math.min(numUp, numRight), Math.min(numRight, numDown), Math.min(numDown, numLeft), Math.min(numLeft, numUp)));
+			}
+		}
+		
 	}
 		
+	public static int getNumSqrToEdge(int x, int y) {
+		return numSqrToEdge.get(y).get(x);
+	}
+
+	public static int getTotalMoves() {
+		return totalMoves;
+	}
+
+	public static void setTotalMoves() {
+		totalMoves++;
+	}
+
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub	
 		
@@ -149,6 +181,8 @@ public class ChessGame {
 					}
 				}
 				
+				reProcess();
+				
 				
 				
 				
@@ -199,6 +233,18 @@ public class ChessGame {
 		}
 		
 		return null;
+	}
+	
+	public static void reProcess() {
+		for (Piece p : pList) {
+			p.preProcess();
+		}
+	}
+	
+	public static void changePiece(Piece a, String b) {
+		// TODO Auto-generated method stub
+		Piece aReal = getPiece(a.xPos, a.yPos);
+		aReal = new Piece(a.xPos, a.yPos, a.isWhite, b, pList);
 	}
 
 }

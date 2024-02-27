@@ -6,50 +6,69 @@ import chessgame.ChessGame;
 
 public class Pawn extends Piece{
 
-	public Pawn(int xPos, int yPos, boolean isWhite, String type, LinkedList<Piece> pList) {
+	private Pawn(int xPos, int yPos, boolean isWhite, String type, LinkedList<Piece> pList) {
 		super(xPos, yPos, isWhite, type, pList);
-		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	public static Pawn create(int xPos, int yPos, boolean isWhite, String type, LinkedList<Piece> pList) {
+		Pawn a = new Pawn(xPos, yPos, isWhite, type, pList);
+		a.preProcess();
+		a.possibleMove.add(new Move(xPos, yPos, xPos, yPos + (isWhite ? 2 : -2), null));
+		return a;
 	}
 
 	@Override
 	public void move(int xPos, int yPos, LinkedList<Piece> pList) {
-		// TODO Auto-generated method stub
-//		System.out.println(this.xPos + " " + this.yPos + " " + yPos + " " + xPos);
-		if(ChessGame.getPiece(xPos, yPos) != null) {
-			if(this.isWhite && (yPos-1 == this.yPos && (xPos-1 == this.xPos || xPos+1 == this.xPos))) {
-				super.move(xPos, yPos, pList);
-			}else if(!(this.isWhite) && (yPos+1 == this.yPos && (xPos-1 == this.xPos || xPos+1 == this.xPos))){
-				super.move(xPos, yPos, pList);
-			}
-		}else {
-			if(((yPos == this.yPos-1 && !this.isWhite) || (yPos == this.yPos+1 && this.isWhite))  && xPos == this.xPos) {
-				super.move(xPos, yPos, pList);
-			}else if(this.isWhite && (yPos-1 == this.yPos && (xPos-1 == this.xPos || xPos+1 == this.xPos))){
-				if(ChessGame.getPiece(xPos, yPos-1) != null) {
-					super.move(xPos, yPos, pList);
-					checkKill(xPos, yPos-1, pList);
-				}
-			}else if(!(this.isWhite) && (yPos+1 == this.yPos && (xPos-1 == this.xPos || xPos+1 == this.xPos))){
-				if(ChessGame.getPiece(xPos, yPos+1) != null) {
-					super.move(xPos, yPos, pList);
-					checkKill(xPos, yPos+1, pList);
-				}
-			}else if(((this.yPos == 1 && this.isWhite && yPos == this.yPos+2) || (this.yPos == 6 && !this.isWhite && yPos == this.yPos-2)) && xPos == this.xPos) {
-				super.move(xPos, yPos, pList);
-			}
+		
+		super.move(xPos, yPos, pList);
+		if((this.yPos == 0 && !this.isWhite) || (this.yPos == 7 && this.isWhite)) {
+			Piece temp = this;
+			ChessGame.changePiece(temp, "queen");
+			this.die(pList);
 			
 		}
+		if(possibleMove.isEmpty()) preProcess();
 		
-		if((this.isWhite && this.yPos == 7) || (!(this.isWhite) && this.yPos == 0)){
-			Piece newQueen = new Piece(this.xPos, this.yPos, this.isWhite, "Queen", pList);
-			this.die(pList);	
+	}
+	
+	@Override
+	public void preProcess() {
+		
+		
+		
+		for(int i = -1; i < 2; i++) { // i is either -1 or 1 
+			for(int j = -1; j < 2; j++) {
+				if(i == 0) continue;
+				
+				if(i == -1 && !this.isWhite ) { // black pawn
+					Piece target = ChessGame.getPiece(xPos + j, yPos + i);
+					if((j == 0 && target == null)  || (j != 0 && target != null) ) {
+//						System.out.println("Hello " + this.xPos + ", " + (this.yPos + i));
+						possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
+					}else if(j != 0 && target == null) {
+						target = ChessGame.getPiece(xPos + j, yPos);
+						if(target != null && target.yPos == 3 && target.moveCount == 1 && ChessGame.getTotalMoves() == target.moveTime) {
+							System.out.println(target.yPos + " " + target.moveCount);
+							possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
+						}
+					}
+				}else if(i == 1) { // White Pawn
+					Piece target = ChessGame.getPiece(xPos + j, yPos + i);
+					if((j == 0 && target == null)  || (j != 0 && target != null)) {
+//						System.out.println("Hello " + this.xPos + ", " + (this.yPos + i));
+						possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
+					}else if(j != 0 && target == null) {
+						target = ChessGame.getPiece(xPos + j, yPos);
+						if(target != null && target.yPos == 4 && target.moveCount == 1 && ChessGame.getTotalMoves() == target.moveTime) {
+							possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
+						}
+					}
+				}
+				
+			}
 		}
-			
-			
-			
-		
-		
-		
 	}
 
 }

@@ -1,5 +1,7 @@
 package pieces;
 
+import chessgame.ChessGame;
+
 public class Move {
 
 	public int xStart;
@@ -15,7 +17,14 @@ public class Move {
 		this.xEnd = xEnd;
 		this.yEnd = yEnd;
 		this.target = target;
+		
+		if(ChessGame.getPiece(xEnd, yEnd).type.compareToIgnoreCase("king") == 0) {
+			ChessGame.check = true;
+		}
 	}
+	
+	
+	
 	
 	
 	

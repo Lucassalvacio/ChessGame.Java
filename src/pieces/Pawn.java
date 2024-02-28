@@ -24,18 +24,19 @@ public class Pawn extends Piece{
 	@Override
 	public void preProcess() {
 		super.preProcess();
+		if(moveCount == 0) possibleMove.add(new Move(xPos, yPos, xPos, yPos + (isWhite ? 2 : -2), null));
 		for(int i = -1; i < 2; i++) { // i is either -1 or 1 
 			for(int j = -1; j < 2; j++) {
 				if(i == 0) continue;
-				if(moveCount == 0) possibleMove.add(new Move(xPos, yPos, xPos, yPos + (isWhite ? 2 : -2), null));
+				
 				if(i == -1 && !this.isWhite ) { // black pawn
 					Piece target = ChessGame.getPiece(xPos + j, yPos + i);
-					if((j == 0 && target == null)  || (j != 0 && target != null) ) { 
+					if((j == 0 && target == null)  || (j != 0 && target != null && target.isWhite != this.isWhite) ) { 
 						// Moving forward or Eating Opponent Piece 
 						possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
 					}else if(j != 0 && target == null) {
 						target = ChessGame.getPiece(xPos + j, yPos);
-						if(target != null && target.yPos == 3 && target.moveCount == 1 && ChessGame.getTotalMoves() == target.moveTime) {
+						if(target != null && target.yPos == 3 && target.moveCount == 1 && ChessGame.getTotalMoves() == target.moveTime && target.isWhite != this.isWhite) {
 							// Eating Opponent Piece (En Passant rule)
 							possibleMove.add(new Move(xPos, yPos, xPos + j, yPos + i, target));
 						}

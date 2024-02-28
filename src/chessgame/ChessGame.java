@@ -27,9 +27,12 @@ public class ChessGame {
 	static Piece selectedP;
 	public static LinkedList<Piece> pList = new LinkedList<>();
 
-	
 	public static ArrayList<ArrayList<ArrayList<Integer>>> numSqrToEdge = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	public static int totalMoves = 0;
+	
+	public static int[] checks;
+	public static boolean check;
+//	public static boolean checkMate;
 	
 	public static void reset() {
 		pList.clear();
@@ -86,12 +89,6 @@ public class ChessGame {
 			}
 			numSqrToEdge.add(arrayHolder);
 		}
-//		for(int i = 0; i < 8; i++) {
-//			for(int j = 0; j < 8; j++) {
-//				System.out.print(numSqrToEdge.get(i).get(j).get(6) + " ");
-//			}
-//			System.out.println();
-//		}
 
 		reset();
 		
@@ -110,11 +107,28 @@ public class ChessGame {
 						}else {
 							g.setColor(Color.decode("#eeeed2"));
 						}
-						g.fillRect(x*65, y*64, 64, 64);
+						g.fillRect(x*64, y*64, 64, 64);
 						black = !black;
 					}
 					black = !black;
 				}
+				
+				if(selectedP != null) {
+					for(Move m : selectedP.possibleMove) {
+						g.setColor(new Color(0, 0, 0, 36));
+						int r = 30;
+						int x = m.xEnd*64 + (32 - (r/2));
+						int y = m.yEnd*64 + (32 - (r/2));
+						g.fillOval(x, y, r, r);
+					}
+					Move m = selectedP.getMove((selectedP.xRawPos + 32)/64, (selectedP.yRawPos + 32)/64);
+					if(m != null) {
+						g.setColor(Color.decode("#baca44"));
+						g.fillRect(m.xEnd * 64,m.yEnd * 64, 64, 64);
+					}
+					
+				}
+				
 				for (Piece p : pList) {
 					int idx = 0;
 					if(p.type.equalsIgnoreCase("king")) {
@@ -135,6 +149,7 @@ public class ChessGame {
 					}
 					g.drawImage(piecesImage[idx], p.xRawPos, p.yRawPos, this);
 				}
+				
 			}
 		};
 		frame.add(panel);
@@ -166,6 +181,9 @@ public class ChessGame {
 				// TODO Auto-generated method stub
 				if(selectedP == null) {
 					selectedP = getPiece(e.getX()/64, e.getY()/64);
+					if(selectedP != null && ((selectedP.isWhite && totalMoves % 2 ==  1)|| ((!selectedP.isWhite) && totalMoves % 2 == 0))) {
+						selectedP = null;
+					}
 				}
 				
 			}
@@ -199,6 +217,7 @@ public class ChessGame {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				// TODO Auto-generated method stub
+				
 				if(selectedP != null) {
 					selectedP.xRawPos = e.getX() - 32;
 					selectedP.yRawPos = e.getY() - 32;

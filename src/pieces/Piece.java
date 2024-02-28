@@ -50,7 +50,7 @@ public class Piece {
 		}else {
 			this.xRawPos = this.xPos*64;
 			this.yRawPos = this.yPos*64;
-			System.out.println(this.xPos + ", " + this.yPos + " to " + xPos + ", " + yPos + "Is Not Valid");
+			System.out.println(this.type + " " + this.xPos + ", " + this.yPos + " to " + xPos + ", " + yPos + "Is Not Valid");
 		}	
 	}
 	

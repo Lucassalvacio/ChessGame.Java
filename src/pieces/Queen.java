@@ -11,10 +11,13 @@ public class Queen extends LongWalkers{
 	
 	@Override
 	public void preProcess() {
+		this.isCheck = false;
 		// TODO Auto-generated method stub
-		super.preProcess();
+		
+		
 		diagProcess();
 		straightProcess();
+		super.preProcess();
 	}
 
 }

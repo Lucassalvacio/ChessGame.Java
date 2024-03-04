@@ -12,8 +12,9 @@ public class Bishop extends LongWalkers{
 	@Override
 	public void preProcess() {
 		// TODO Auto-generated method stub
-		super.preProcess();
+		this.isCheck = false;
 		diagProcess();
+		super.preProcess();
 	}
 
 }

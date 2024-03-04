@@ -1,6 +1,7 @@
 package pieces;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import chessgame.ChessGame;
@@ -18,6 +19,8 @@ public class Piece {
 	protected int moveCount = 0;
 	protected int moveTime;
 	
+	public boolean isCheck;
+
 	public Piece(int xPos, int yPos, boolean isWhite, String type, LinkedList<Piece> pList) {
 		super();
 		this.xPos = xPos;
@@ -33,7 +36,38 @@ public class Piece {
 	
 	public void move(int xPos, int yPos, LinkedList<Piece> pList) {
 		Move temp = getMove(xPos, yPos);
-		if( temp != null) {
+		Piece target = temp.target;
+		int redoTargetX = 10;
+		if(!ChessGame.checkPieces.isEmpty()) {
+			int redoX = this.xPos, redoY = this.yPos;
+			if(temp.target != null) {
+				redoTargetX = target.xPos;
+				target.xPos = 10;
+			}
+			ChessGame.checkPieces.clear();
+			this.xPos = xPos;
+			this.yPos = yPos;
+			this.xRawPos = xPos * 64;
+			this.yRawPos = yPos * 64;
+			ChessGame.reProcess();
+			if(!ChessGame.checkPieces.isEmpty()) {
+				System.out.println(ChessGame.checkPieces.get(0));
+				this.xPos = redoX;
+				this.yPos = redoY;
+				this.xRawPos = redoX * 64;
+				this.yRawPos = redoY * 64;
+				if(redoTargetX != 10) temp.target.xPos = redoTargetX; 
+				ChessGame.reProcess();
+			}else {
+				if(target != null) target.die(pList);
+				moveCount++;
+				ChessGame.setTotalMoves();
+				moveTime = ChessGame.getTotalMoves();
+				possibleMove.clear();
+
+				ChessGame.reProcess();
+			}
+		}else if( temp != null) {
 			if(temp.target != null) {
 				temp.target.die(pList);
 			}
@@ -68,7 +102,9 @@ public class Piece {
 	}
 	
 	public void preProcess() {
-		possibleMove.clear();
+		if(isCheck == true) {
+			ChessGame.checkPieces.add(this);
+		}
 	}
 	
 

@@ -14,25 +14,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+
+
 import pieces.*;
 
-public class ChessGame {
-
+public class ChessGame{
+	
 	static Piece selectedP;
 	public static LinkedList<Piece> pList = new LinkedList<>();
 
 	public static ArrayList<ArrayList<ArrayList<Integer>>> numSqrToEdge = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	public static int totalMoves = 0;
 	
-	public static int[] checks;
-	public static boolean check;
-//	public static boolean checkMate;
+	public static List<Piece> checkPieces = new ArrayList<Piece>();
 	
 	public static void reset() {
 		pList.clear();
@@ -89,13 +90,15 @@ public class ChessGame {
 			}
 			numSqrToEdge.add(arrayHolder);
 		}
+		
+		System.out.println("Test");
 
 		reset();
 		
 		JFrame frame = new JFrame();
 		frame.setBounds(10, 10, 512, 512);
 		frame.setUndecorated(true);
-		
+
 		JPanel panel = new JPanel() {
 			@Override
 			public void paint(Graphics g) {
@@ -159,6 +162,10 @@ public class ChessGame {
 			public void mouseReleased(MouseEvent e) {
 				if(selectedP != null) {
 					Piece target = getPiece(e.getX()/64, e.getY()/64);
+					
+					
+					
+					
 					if(target == null) {
 						selectedP.move(e.getX()/64, e.getY()/64, pList);
 						frame.repaint();
@@ -186,6 +193,7 @@ public class ChessGame {
 					}
 				}
 				
+				
 			}
 
 			@Override
@@ -197,17 +205,17 @@ public class ChessGame {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+				System.out.println("Hi");
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
+				System.out.println("Bye");
 				
 			}
 		});
 		frame.addMouseMotionListener(new MouseMotionListener() {
-			
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				// TODO Auto-generated method stub
@@ -226,7 +234,7 @@ public class ChessGame {
 			}
 		});
 		
-		Timer timer = new Timer(120000, new ActionListener(){
+		Timer timer = new Timer(180000, new ActionListener(){
 		    public void actionPerformed(ActionEvent evt) {
 		        frame.dispose();
 		    }
@@ -238,10 +246,6 @@ public class ChessGame {
 		frame.setDefaultCloseOperation(3);
 		frame.setVisible(true);
 	}
-//	
-	public static ArrayList<Integer> getNumSqrToEdge(int x, int y) {
-		return numSqrToEdge.get(y).get(x);
-	}
 
 	public static int getTotalMoves() {
 		return totalMoves;
@@ -251,27 +255,37 @@ public class ChessGame {
 		totalMoves++;
 	}
 	
+	public static ArrayList<Integer> getNumSqrToEdge(int x, int y) {
+		return numSqrToEdge.get(y).get(x);
+	}
+	
 	public static Piece getPiece(int xPos, int yPos) {
-		
 		for (Piece p : pList) {
 			if(p.xPos == xPos && p.yPos == yPos) {
 				return p;
 			}
 		}
-		
 		return null;
 	}
 	
 	public static void reProcess() {
+		checkPieces.clear();
 		for (Piece p : pList) {
+			p.possibleMove.clear();
 			p.preProcess();
+		}
+		
+		if(!checkPieces.isEmpty()) {
+			for (Piece p : checkPieces) {
+				System.out.println((p.isWhite ? "White" : "Black") + " " +  p.type);
+			}
 		}
 	}
 	
 	public static void changePiece(Piece a, String b) {
 		// TODO Auto-generated method stub
 		Piece aReal = getPiece(a.xPos, a.yPos);
-		aReal = new Piece(a.xPos, a.yPos, a.isWhite, b, pList);
+		aReal = new Queen(a.xPos, a.yPos, a.isWhite, b, pList);
 	}
 
 }

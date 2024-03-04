@@ -14,7 +14,7 @@ public class Knight extends Piece{
 	@Override
 	public void preProcess() {
 		// TODO Auto-generated method stub
-		super.preProcess();
+		this.isCheck = false;
 		
 		for(int i = -2; i <= 2; i++) {
 			for(int j = -2; j <= 2; j++) {
@@ -26,6 +26,7 @@ public class Knight extends Piece{
 					
 			}
 		}
+		super.preProcess();
 		
 	}
 

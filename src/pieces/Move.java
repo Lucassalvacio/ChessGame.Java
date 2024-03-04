@@ -10,6 +10,7 @@ public class Move {
 	public int yEnd;
 	public Piece target;
 	
+	
 	public Move(int xStart, int yStart, int xEnd, int yEnd, Piece target) {
 		super();
 		this.xStart = xStart;
@@ -18,8 +19,8 @@ public class Move {
 		this.yEnd = yEnd;
 		this.target = target;
 		
-		if(ChessGame.getPiece(xEnd, yEnd).type.compareToIgnoreCase("king") == 0) {
-			ChessGame.check = true;
+		if(target != null && target.type.compareToIgnoreCase("king") == 0) {
+			ChessGame.getPiece(xStart, yStart).isCheck = true;
 		}
 	}
 	

@@ -23,7 +23,7 @@ public class Pawn extends Piece{
 	
 	@Override
 	public void preProcess() {
-		super.preProcess();
+		this.isCheck = false;
 		if(moveCount == 0) possibleMove.add(new Move(xPos, yPos, xPos, yPos + (isWhite ? 2 : -2), null));
 		for(int i = -1; i < 2; i++) { // i is either -1 or 1 
 			for(int j = -1; j < 2; j++) {
@@ -56,6 +56,7 @@ public class Pawn extends Piece{
 				}
 			}
 		}
+		super.preProcess();
 	}
 
 	private void promotion() {

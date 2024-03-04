@@ -11,9 +11,10 @@ public class Rook extends LongWalkers{
 	
 	@Override
 	public void preProcess() {
-		super.preProcess();
+		this.isCheck = false;
 		// TODO Auto-generated method stub
 		straightProcess();
+		super.preProcess();
 	}
 
 	
